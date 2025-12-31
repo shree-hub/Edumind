@@ -1,7 +1,8 @@
 export enum AppView {
   HOME = 'HOME',
   NOTES = 'NOTES',
-  TEST = 'TEST'
+  TEST = 'TEST',
+  AFFAIRS = 'AFFAIRS'
 }
 
 export enum Difficulty {

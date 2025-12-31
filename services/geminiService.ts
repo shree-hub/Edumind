@@ -1,11 +1,76 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { Difficulty, Question, QuizConfig } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// Using Pro for complex reasoning tasks as per guidelines
 const COMPLEX_MODEL = 'gemini-3-pro-preview';
 const STANDARD_MODEL = 'gemini-3-flash-preview';
+const TTS_MODEL = 'gemini-2.5-flash-preview-tts';
+
+export const getDailyCurrentAffairs = async (language: string = "English"): Promise<{text: string, sources: any[]}> => {
+  try {
+    const today = new Date().toLocaleDateString('en-US', { 
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+    });
+    
+    const prompt = `Provide a concise daily digest of the top 5 most important current affairs for today, ${today}. 
+    The entire response MUST be in ${language}.
+    Focus on events relevant for students and competitive exams.
+    Format each item clearly with:
+    - A category (e.g., [NATIONAL], [INTERNATIONAL], [ECONOMY], [SCIENCE])
+    - A bold headline
+    - A 2-3 sentence summary explaining the significance.
+    Include a "Why it matters for students" takeaway for each.`;
+
+    const response = await ai.models.generateContent({
+      model: STANDARD_MODEL,
+      contents: prompt,
+      config: {
+        tools: [{ googleSearch: {} }],
+      },
+    });
+    
+    const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+    
+    return {
+      text: response.text || "Unable to fetch today's updates.",
+      sources: sources
+    };
+  } catch (error) {
+    console.error("Error fetching current affairs:", error);
+    throw new Error("Failed to load current affairs.");
+  }
+};
+
+export const generateCurrentAffairsSpeech = async (text: string, language: string): Promise<string> => {
+  try {
+    // We clean the text slightly to make it better for TTS (removing markdown symbols)
+    const cleanText = text.replace(/[*#]/g, '');
+    const prompt = `Read the following current affairs summary in ${language} naturally: ${cleanText.substring(0, 1000)}`;
+
+    const response = await ai.models.generateContent({
+      model: TTS_MODEL,
+      contents: [{ parts: [{ text: prompt }] }],
+      config: {
+        responseModalities: [Modality.AUDIO],
+        speechConfig: {
+          voiceConfig: {
+            // Using Kore for a clear, professional educational voice
+            prebuiltVoiceConfig: { voiceName: 'Kore' },
+          },
+        },
+      },
+    });
+
+    const audioData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+    if (!audioData) throw new Error("No audio data returned");
+    
+    return audioData;
+  } catch (error) {
+    console.error("TTS Error:", error);
+    throw error;
+  }
+};
 
 export const generateStudyNotes = async (topic: string, isUPSCDepth: boolean = false): Promise<string> => {
   try {
@@ -43,7 +108,6 @@ export const generateMockTest = async (config: QuizConfig): Promise<Question[]> 
   const { topic, exam, subject, difficulty, questionCount } = config;
   
   try {
-    // Use Pro model for specific exam patterns as it requires better reasoning
     const response = await ai.models.generateContent({
       model: COMPLEX_MODEL,
       contents: `Create a professional mock test for the ${exam} exam on the subject of ${subject}. 
