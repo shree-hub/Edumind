@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Newspaper, RefreshCw, ExternalLink, Globe, Calendar, AlertCircle, Volume2, Square, Languages, Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Newspaper, RefreshCw, ExternalLink, Globe, Calendar, AlertCircle, Volume2, Square, Languages, Loader2, ArrowLeft, CheckCircle2, Star } from 'lucide-react';
 import { getDailyCurrentAffairs, generateCurrentAffairsSpeech } from '../services/geminiService';
 import { MarkdownRenderer } from './MarkdownRenderer';
 
 const LANGUAGES = [
-  { code: "Kannada", label: "ಕನ್ನಡ (Kannada)", flag: "🇰🇳" }, // Note: Using a placeholder emoji or just text
-  { code: "English", label: "English", flag: "🇺🇸" },
-  { code: "Hindi", label: "हिन्दी (Hindi)", flag: "🇮🇳" },
-  { code: "Spanish", label: "Español (Spanish)", flag: "🇪🇸" },
-  { code: "French", label: "Français (French)", flag: "🇫🇷" },
-  { code: "Japanese", label: "日本語 (Japanese)", flag: "🇯🇵" }
+  { code: "Kannada", label: "ಕನ್ನಡ", sublabel: "Kannada", flag: "📜", primary: true },
+  { code: "English", label: "English", sublabel: "International", flag: "🇬🇧", primary: false },
+  { code: "Hindi", label: "हिन्दी", sublabel: "Hindi", flag: "🇮🇳", primary: false },
+  { code: "Spanish", label: "Español", sublabel: "Spanish", flag: "🇪🇸", primary: false },
+  { code: "French", label: "Français", sublabel: "French", flag: "🇫🇷", primary: false }
 ];
 
 interface DailyCurrentAffairsProps {
@@ -24,7 +23,6 @@ export const DailyCurrentAffairs: React.FC<DailyCurrentAffairsProps> = ({ onBack
   const [error, setError] = useState<string | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState("Kannada");
   
-  // Audio state
   const [isPlaying, setIsPlaying] = useState(false);
   const [isAudioLoading, setIsAudioLoading] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -39,8 +37,8 @@ export const DailyCurrentAffairs: React.FC<DailyCurrentAffairsProps> = ({ onBack
       setData(result);
       setPhase('content');
     } catch (err) {
-      setError("ವಾರ್ತೆಗಳನ್ನು ಪಡೆಯಲು ಸಾಧ್ಯವಾಗುತ್ತಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. (Unable to sync with live news.)");
-      setPhase('selection'); // Go back to selection on error so they can try again
+      setError("ವಾರ್ತೆಗಳನ್ನು ಪಡೆಯಲು ಸಾಧ್ಯವಾಗುತ್ತಿಲ್ಲ. (Unable to sync news). Please try again.");
+      setPhase('selection');
     }
   };
 
@@ -85,7 +83,6 @@ export const DailyCurrentAffairs: React.FC<DailyCurrentAffairsProps> = ({ onBack
       stopAudio();
       return;
     }
-
     if (!data?.text) return;
 
     setIsAudioLoading(true);
@@ -101,11 +98,7 @@ export const DailyCurrentAffairs: React.FC<DailyCurrentAffairsProps> = ({ onBack
       const source = audioContextRef.current.createBufferSource();
       source.buffer = buffer;
       source.connect(audioContextRef.current.destination);
-      
-      source.onended = () => {
-        setIsPlaying(false);
-      };
-      
+      source.onended = () => setIsPlaying(false);
       source.start(0);
       sourceNodeRef.current = source;
       setIsPlaying(true);
@@ -118,53 +111,58 @@ export const DailyCurrentAffairs: React.FC<DailyCurrentAffairsProps> = ({ onBack
 
   if (phase === 'selection') {
     return (
-      <div className="max-w-4xl mx-auto py-12">
+      <div className="max-w-4xl mx-auto py-12 px-4 animate-in fade-in duration-500">
         <div className="text-center mb-12">
           <button 
             onClick={onBack}
-            className="mb-8 inline-flex items-center text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors font-medium"
+            className="mb-8 inline-flex items-center text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-all font-medium group"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
             Back to Dashboard
           </button>
-          <div className="inline-flex items-center justify-center p-4 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl mb-6 shadow-sm">
-            <Languages className="w-10 h-10 text-indigo-600 dark:text-indigo-400" />
+          
+          <div className="inline-flex items-center justify-center p-5 bg-indigo-100 dark:bg-indigo-900/30 rounded-3xl mb-8 shadow-sm">
+            <Languages className="w-12 h-12 text-indigo-600 dark:text-indigo-400" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-4">
-            ಭಾಷೆಯನ್ನು ಆರಿಸಿ / Select Language
+          
+          <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
+             ಸುದ್ದಿ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-            ಇಂದಿನ ಪ್ರಚಲಿತ ವಿದ್ಯಮಾನಗಳನ್ನು ಓದಲು ನಿಮ್ಮ ನೆಚ್ಚಿನ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ.
-            (Select your preferred language to read today's current affairs.)
-          </p>
+          <p className="text-xl text-slate-600 dark:text-slate-400 mb-2 font-medium">Choose your primary news language</p>
+          <div className="h-1.5 w-24 bg-indigo-500 mx-auto rounded-full mb-10"></div>
         </div>
 
         {error && (
-          <div className="mb-8 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-xl p-4 flex items-center gap-3 text-red-700 dark:text-red-400">
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            <p className="text-sm font-medium">{error}</p>
+          <div className="mb-10 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-2xl p-5 flex items-center gap-4 text-red-700 dark:text-red-400 animate-in slide-in-from-top-4 duration-300">
+            <AlertCircle className="w-6 h-6 flex-shrink-0" />
+            <p className="font-bold">{error}</p>
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {LANGUAGES.map((lang) => (
             <button
               key={lang.code}
               onClick={() => handleLanguageSelect(lang.code)}
-              className={`group relative flex flex-col items-center justify-center p-8 rounded-2xl border-2 transition-all duration-300 ${
-                selectedLanguage === lang.code 
-                ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 shadow-lg ring-2 ring-indigo-100 dark:ring-indigo-900/20' 
-                : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-md'
-              }`}
+              className={`group relative flex flex-col items-center justify-center p-10 rounded-[2.5rem] border-4 transition-all duration-500 transform hover:-translate-y-2 ${
+                lang.primary 
+                ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20 shadow-xl shadow-indigo-100 dark:shadow-none' 
+                : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900'
+              } hover:border-indigo-400 dark:hover:border-indigo-600 hover:shadow-2xl`}
             >
-              {selectedLanguage === lang.code && (
-                <div className="absolute top-4 right-4 text-indigo-600 dark:text-indigo-400">
-                  <CheckCircle2 className="w-5 h-5" />
+              {lang.primary && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-indigo-600 text-white text-xs font-black rounded-full uppercase tracking-widest shadow-lg flex items-center gap-2">
+                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" /> Main Language
                 </div>
               )}
-              <span className="text-4xl mb-4 group-hover:scale-110 transition-transform">{lang.flag}</span>
-              <span className="text-lg font-bold text-slate-800 dark:text-white mb-1">{lang.label}</span>
-              <span className="text-xs text-slate-400 uppercase tracking-widest font-bold">{lang.code === 'Kannada' ? 'Primary' : lang.code}</span>
+              
+              <span className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">{lang.flag}</span>
+              <span className="text-3xl font-black text-slate-900 dark:text-white mb-2">{lang.label}</span>
+              <span className="text-xs text-slate-400 font-black uppercase tracking-[0.2em]">{lang.sublabel}</span>
+              
+              <div className="mt-8 bg-indigo-600 text-white text-xs font-bold px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                Continue &rarr;
+              </div>
             </button>
           ))}
         </div>
@@ -174,111 +172,117 @@ export const DailyCurrentAffairs: React.FC<DailyCurrentAffairsProps> = ({ onBack
 
   if (phase === 'loading') {
     return (
-      <div className="max-w-5xl mx-auto py-20 flex flex-col items-center justify-center">
-        <div className="relative w-20 h-20 mb-8">
-          <div className="absolute inset-0 border-4 border-indigo-100 dark:border-indigo-900/30 rounded-full"></div>
-          <div className="absolute inset-0 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-          <Newspaper className="absolute inset-0 m-auto w-8 h-8 text-indigo-600 animate-pulse" />
+      <div className="max-w-5xl mx-auto py-32 flex flex-col items-center justify-center">
+        <div className="relative w-28 h-28 mb-12">
+          <div className="absolute inset-0 border-[6px] border-indigo-100 dark:border-indigo-900/30 rounded-full"></div>
+          <div className="absolute inset-0 border-[6px] border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+             <Globe className="w-12 h-12 text-indigo-600 animate-pulse" />
+          </div>
         </div>
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">
-          {selectedLanguage === 'Kannada' ? 'ಸುದ್ದಿಗಳನ್ನು ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ...' : `Fetching news in ${selectedLanguage}...`}
+        <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-4 text-center">
+          {selectedLanguage === 'Kannada' ? 'ಕ್ಷಣ ಕ್ಷಣದ ಮಾಹಿತಿ ಪಡೆಯಲಾಗುತ್ತಿದೆ...' : `Curating ${selectedLanguage} coverage...`}
         </h2>
-        <p className="text-slate-500 dark:text-slate-400 animate-pulse">
-          Gemini Search is browsing the web for the latest updates.
-        </p>
+        <p className="text-slate-500 dark:text-slate-400 animate-pulse text-lg font-bold tracking-tight">Syncing with global news sources via Gemini AI</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+    <div className="max-w-5xl mx-auto px-4 animate-in fade-in slide-in-from-bottom-6 duration-700">
+      <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div className="flex items-center gap-5">
           <button 
             onClick={() => setPhase('selection')}
-            className="flex items-center text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors font-medium"
+            className="flex items-center px-4 py-2 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 text-slate-700 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-400 transition-all font-black text-xs shadow-sm hover:border-indigo-200 dark:hover:border-indigo-900 group"
           >
-            <ArrowLeft className="w-5 h-5 mr-1" />
-            Change Language
+            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+            {selectedLanguage === 'Kannada' ? 'ಭಾಷೆ ಬದಲಿಸಿ' : 'Switch Language'}
           </button>
-          <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
-          <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center">
-            <Newspaper className="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" />
-            {selectedLanguage === 'Kannada' ? 'ಇಂದಿನ ಮುಖ್ಯಾಂಶಗಳು' : 'Today\'s Digest'}
+          <div className="h-8 w-1 bg-slate-200 dark:bg-slate-800 hidden sm:block rounded-full"></div>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white flex items-center tracking-tight">
+            <Newspaper className="w-7 h-7 mr-3 text-indigo-600 dark:text-indigo-400" />
+            {selectedLanguage === 'Kannada' ? 'ಇಂದಿನ ಮುಖ್ಯಾಂಶಗಳು' : 'Daily Spotlight'}
           </h2>
         </div>
         
-        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest bg-slate-100 dark:bg-slate-800/50 px-3 py-1 rounded-full">
-          <Calendar className="w-3.5 h-3.5" />
+        <div className="flex items-center gap-3 text-xs font-black text-indigo-700 dark:text-indigo-300 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-900/40 px-5 py-2.5 rounded-2xl border-2 border-indigo-100 dark:border-indigo-800/50 shadow-sm">
+          <Calendar className="w-4 h-4" />
           {new Date().toLocaleDateString(selectedLanguage === 'Kannada' ? 'kn-IN' : 'en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
-        <div className="bg-slate-50 dark:bg-slate-800/50 px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">{LANGUAGES.find(l => l.code === selectedLanguage)?.flag}</span>
-            <span className="text-sm font-bold text-slate-600 dark:text-slate-300">
-              {selectedLanguage === 'Kannada' ? 'ಕನ್ನಡ ಸುದ್ದಿ ಸಂಚಯ' : `${selectedLanguage} News Edition`}
-            </span>
+      <div className="bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-[3rem] overflow-hidden shadow-2xl">
+        <div className="bg-slate-50 dark:bg-slate-800/50 px-8 py-8 border-b-2 border-slate-100 dark:border-slate-800 flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 bg-white dark:bg-slate-950 rounded-[1.5rem] flex items-center justify-center text-4xl shadow-inner border-2 border-slate-100 dark:border-slate-800">
+              {LANGUAGES.find(l => l.code === selectedLanguage)?.flag}
+            </div>
+            <div>
+              <span className="block text-lg font-black text-slate-900 dark:text-white uppercase tracking-[0.1em]">
+                {selectedLanguage === 'Kannada' ? 'ಕನ್ನಡ ಆವೃತ್ತಿ' : `${selectedLanguage} Edition`}
+              </span>
+              <span className="text-sm text-slate-500 font-bold opacity-80">AI Verified Content • Real-time Sync</span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            {/* Read Button */}
+          <div className="flex items-center gap-4 w-full lg:w-auto">
             <button
               onClick={handleReadAloud}
               disabled={isAudioLoading}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all duration-300 shadow-sm ${
+              className={`flex-1 lg:flex-none flex items-center justify-center gap-4 px-10 py-4 rounded-[1.5rem] text-sm font-black transition-all duration-300 shadow-xl ${
                 isPlaying 
-                ? 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 border border-red-200 dark:border-red-800' 
-                : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                ? 'bg-red-500 text-white hover:bg-red-600 hover:scale-105' 
+                : 'bg-indigo-600 text-white hover:bg-indigo-700 hover:scale-105 active:scale-95 shadow-indigo-200 dark:shadow-none'
               } disabled:opacity-50`}
             >
               {isAudioLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-5 h-5 animate-spin" />
               ) : isPlaying ? (
-                <Square className="w-4 h-4 fill-current" />
+                <Square className="w-5 h-5 fill-current" />
               ) : (
-                <Volume2 className="w-4 h-4" />
+                <Volume2 className="w-5 h-5" />
               )}
-              {isAudioLoading ? (selectedLanguage === 'Kannada' ? 'ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ...' : 'Synthesizing...') : isPlaying ? (selectedLanguage === 'Kannada' ? 'ನಿಲ್ಲಿಸಿ' : 'Stop') : (selectedLanguage === 'Kannada' ? 'ಕೇಳಿಸಿಕೊಳ್ಳಿ' : 'Listen Now')}
+              {isAudioLoading ? 'Processing...' : isPlaying ? (selectedLanguage === 'Kannada' ? 'ನಿಲ್ಲಿಸಿ' : 'Stop Reading') : (selectedLanguage === 'Kannada' ? 'ಸುದ್ದಿ ಕೇಳಿ' : 'Listen Now')}
             </button>
 
             <button 
               onClick={() => fetchAffairs()}
-              className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
-              title="Refresh news"
+              className="p-4 hover:bg-indigo-50 dark:hover:bg-indigo-900/50 rounded-[1.5rem] transition-all text-indigo-600 dark:text-indigo-400 border-2 border-indigo-50 dark:border-indigo-900/50 shadow-sm"
+              title="Refresh Content"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-6 h-6" />
             </button>
           </div>
         </div>
         
-        <div className="p-6 md:p-10 min-h-[400px]">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+        <div className="p-10 lg:p-16 min-h-[500px]">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-16">
             <div className="lg:col-span-3">
               {isPlaying && (
-                <div className="mb-6 flex items-center gap-3 px-4 py-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800 animate-pulse">
-                  <div className="flex gap-1.5">
-                    <div className="w-1.5 h-4 bg-indigo-500 rounded-full animate-[bounce_1s_infinite_0s]"></div>
-                    <div className="w-1.5 h-4 bg-indigo-500 rounded-full animate-[bounce_1s_infinite_0.2s]"></div>
-                    <div className="w-1.5 h-4 bg-indigo-500 rounded-full animate-[bounce_1s_infinite_0.4s]"></div>
+                <div className="mb-10 flex items-center gap-5 px-8 py-5 bg-indigo-50 dark:bg-indigo-900/30 rounded-[2rem] border-2 border-indigo-100 dark:border-indigo-800 animate-pulse">
+                  <div className="flex gap-2.5">
+                    <div className="w-2 h-8 bg-indigo-600 rounded-full animate-[bounce_1s_infinite_0s]"></div>
+                    <div className="w-2 h-8 bg-indigo-600 rounded-full animate-[bounce_1s_infinite_0.2s]"></div>
+                    <div className="w-2 h-8 bg-indigo-600 rounded-full animate-[bounce_1s_infinite_0.4s]"></div>
                   </div>
-                  <span className="text-sm font-bold text-indigo-700 dark:text-indigo-300">
-                    {selectedLanguage === 'Kannada' ? 'ಸಿಸ್ಟಮ್ ಸುದ್ದಿಯನ್ನು ಓದುತ್ತಿದೆ...' : 'System is reading the news summary...'}
+                  <span className="text-lg font-black text-indigo-800 dark:text-indigo-300 uppercase tracking-wider">
+                    {selectedLanguage === 'Kannada' ? 'ಸುದ್ದಿ ವಾಚನ ನಡೆಯುತ್ತಿದೆ...' : 'Audio narration in progress...'}
                   </span>
                 </div>
               )}
-              <MarkdownRenderer content={data?.text || ''} />
+              <div className="prose prose-xl prose-indigo dark:prose-invert max-w-none">
+                <MarkdownRenderer content={data?.text || ''} />
+              </div>
             </div>
             
             <div className="lg:col-span-1">
-              <div className="sticky top-24">
-                <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                  <Globe className="w-3.5 h-3.5" /> 
-                  {selectedLanguage === 'Kannada' ? 'ಮೂಲ ಸುದ್ದಿಗಳು' : 'Verified Sources'}
+              <div className="sticky top-28">
+                <h3 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
+                  <Globe className="w-5 h-5" /> 
+                  Citations & Sources
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {data?.sources && data.sources.length > 0 ? (
                     data.sources.slice(0, 5).map((chunk: any, i: number) => (
                       <a 
@@ -286,29 +290,39 @@ export const DailyCurrentAffairs: React.FC<DailyCurrentAffairsProps> = ({ onBack
                         href={chunk.web?.uri || '#'} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="block group p-4 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border border-slate-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-700"
+                        className="block group p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-800/30 hover:bg-white dark:hover:bg-slate-800 transition-all border-2 border-transparent hover:border-indigo-200 dark:hover:border-indigo-800 hover:shadow-xl"
                       >
-                        <div className="text-sm font-bold text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 line-clamp-2 leading-snug mb-1">
-                          {chunk.web?.title || 'Related News Item'}
+                        <div className="text-sm font-black text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 line-clamp-2 leading-relaxed mb-3">
+                          {chunk.web?.title || 'External Report'}
                         </div>
-                        <div className="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1 uppercase font-bold tracking-tighter">
-                          Official Coverage <ExternalLink className="w-2.5 h-2.5" />
+                        <div className="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1 uppercase font-black tracking-tighter">
+                          Official Outlet <ExternalLink className="w-3.5 h-3.5" />
                         </div>
                       </a>
                     ))
                   ) : (
-                    <p className="text-sm text-slate-400 italic px-3">Real-time source links verified by Gemini Search.</p>
+                    <div className="p-6 rounded-[1.5rem] bg-slate-50 dark:bg-slate-800/30 border-2 border-dashed border-slate-200 dark:border-slate-800 text-center">
+                      <p className="text-xs text-slate-400 italic font-bold">Verified via Gemini Search</p>
+                    </div>
                   )}
                 </div>
-                <div className="mt-8 p-6 bg-amber-50 dark:bg-amber-900/10 rounded-2xl border border-amber-100 dark:border-amber-900/30">
-                  <h4 className="text-xs font-bold text-amber-800 dark:text-amber-400 uppercase mb-2">
-                    {selectedLanguage === 'Kannada' ? 'ಅಭ್ಯಾಸ ಮಾಡಿ' : 'Practice Mode'}
-                  </h4>
-                  <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed font-medium">
+                
+                <div className="mt-12 p-8 bg-gradient-to-br from-indigo-600 to-indigo-900 rounded-[2rem] text-white shadow-2xl shadow-indigo-200 dark:shadow-none">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+                    <h4 className="text-xs font-black uppercase tracking-[0.2em]">Prep Challenge</h4>
+                  </div>
+                  <p className="text-sm font-bold leading-relaxed opacity-95">
                     {selectedLanguage === 'Kannada' 
-                      ? 'ಓದಿದ ನಂತರ, ನಿಮ್ಮ ನೆನಪಿನ ಶಕ್ತಿಯನ್ನು ಪರೀಕ್ಷಿಸಲು ಮಾಕ್ ಟೆಸ್ಟ್ ಸಿದ್ಧಪಡಿಸಿ.' 
-                      : 'Finished reading? Test your memory by generating a Mock Test on these current topics.'}
+                      ? 'ಓದಿದ ಮೇಲೆ, ಈ ವಿಷಯಗಳ ಬಗ್ಗೆ ಮಾಕ್ ಟೆಸ್ಟ್ ತೆಗೆದುಕೊಳ್ಳಲು ಸಿದ್ಧರಾಗಿ!' 
+                      : 'Mastered today\'s news? Test your retention with a dynamic mock test!'}
                   </p>
+                  <button 
+                    onClick={onBack}
+                    className="mt-6 w-full py-3 bg-white/10 hover:bg-white/20 border-2 border-white/20 rounded-xl text-xs font-black uppercase tracking-widest transition-all"
+                  >
+                    Go to Mock Test
+                  </button>
                 </div>
               </div>
             </div>

@@ -18,6 +18,8 @@
       }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Babel Standalone for TSX support in browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
       body {
         font-family: 'Inter', sans-serif;
@@ -61,6 +63,7 @@
 </head>
   <body class="bg-slate-50 text-slate-900 antialiased transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <!-- Load index.tsx using Babel for browser-side transpilation -->
+    <script type="text/babel" data-type="module" data-presets="typescript,react" src="/index.tsx"></script>
   </body>
 </html>
