@@ -1,0 +1,5 @@
+{
+  "name": "EduMind - Smart Study Companion",
+  "description": "An AI-powered educational platform that generates comprehensive study notes and interactive mock tests on any topic using Gemini 2.5.",
+  "requestFramePermissions": []
+}
