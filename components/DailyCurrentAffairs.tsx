@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Newspaper, RefreshCw, ExternalLink, Globe, Calendar, AlertCircle, Volume2, Square, Languages, Loader2, ArrowLeft, CheckCircle2, Star } from 'lucide-react';
-import { getDailyCurrentAffairs, generateCurrentAffairsSpeech } from '../services/geminiService';
-import { MarkdownRenderer } from './MarkdownRenderer';
+import { getDailyCurrentAffairs, generateCurrentAffairsSpeech } from '../services/geminiService.ts';
+import { MarkdownRenderer } from './MarkdownRenderer.tsx';
 
 const LANGUAGES = [
   { code: "Kannada", label: "ಕನ್ನಡ", sublabel: "Kannada", flag: "📜", primary: true },

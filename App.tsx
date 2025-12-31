@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { Book, PenTool, GraduationCap, Moon, Sun, Newspaper } from 'lucide-react';
-import { AppView } from './types';
-import { NotesGenerator } from './components/NotesGenerator';
-import { MockTestGenerator } from './components/MockTestGenerator';
-import { DailyCurrentAffairs } from './components/DailyCurrentAffairs';
+import { AppView } from './types.ts';
+import { NotesGenerator } from './components/NotesGenerator.tsx';
+import { MockTestGenerator } from './components/MockTestGenerator.tsx';
+import { DailyCurrentAffairs } from './components/DailyCurrentAffairs.tsx';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<AppView>(AppView.HOME);
