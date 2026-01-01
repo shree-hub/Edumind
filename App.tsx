@@ -63,7 +63,7 @@ export default function App() {
           className="group relative flex flex-col items-start p-8 bg-white dark:bg-slate-900 rounded-2xl shadow-sm hover:shadow-xl dark:hover:shadow-indigo-900/10 border border-slate-200 dark:border-slate-800 transition-all duration-300 text-left"
         >
           <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg mb-6 group-hover:scale-110 transition-transform duration-300">
-            <Book className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+            < Book className="w-8 h-8 text-blue-600 dark:text-blue-400" />
           </div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">Study Notes</h2>
           <p className="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
