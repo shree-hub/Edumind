@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { BookOpen, Copy, Check, ArrowLeft, RefreshCw, Sparkles, Info, X } from 'lucide-react';
-import { generateStudyNotes } from '../services/geminiService.ts';
-import { MarkdownRenderer } from './MarkdownRenderer.tsx';
-import { Button } from './Button.tsx';
+import { generateStudyNotes } from '../services/geminiService';
+import { MarkdownRenderer } from './MarkdownRenderer';
+import { Button } from './Button';
 
 interface NotesGeneratorProps {
   onBack: () => void;

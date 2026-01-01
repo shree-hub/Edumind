@@ -1,6 +1,5 @@
-
 import { GoogleGenAI, Type, Modality } from "@google/genai";
-import { Difficulty, Question, QuizConfig } from "../types.ts";
+import { Difficulty, Question, QuizConfig } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -45,7 +44,6 @@ export const getDailyCurrentAffairs = async (language: string = "English"): Prom
 
 export const generateCurrentAffairsSpeech = async (text: string, language: string): Promise<string> => {
   try {
-    // We clean the text slightly to make it better for TTS (removing markdown symbols)
     const cleanText = text.replace(/[*#]/g, '');
     const prompt = `Read the following current affairs summary in ${language} naturally: ${cleanText.substring(0, 1000)}`;
 
@@ -56,7 +54,6 @@ export const generateCurrentAffairsSpeech = async (text: string, language: strin
         responseModalities: [Modality.AUDIO],
         speechConfig: {
           voiceConfig: {
-            // Using Kore for a clear, professional educational voice
             prebuiltVoiceConfig: { voiceName: 'Kore' },
           },
         },

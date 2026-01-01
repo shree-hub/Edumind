@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { Book, PenTool, GraduationCap, Moon, Sun, Newspaper } from 'lucide-react';
-import { AppView } from './types';
-import { NotesGenerator } from './components/NotesGenerator';
-import { MockTestGenerator } from './components/MockTestGenerator';
-import { DailyCurrentAffairs } from './components/DailyCurrentAffairs';
+import { AppView } from './types.ts';
+import { NotesGenerator } from './components/NotesGenerator.tsx';
+import { MockTestGenerator } from './components/MockTestGenerator.tsx';
+import { DailyCurrentAffairs } from './components/DailyCurrentAffairs.tsx';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<AppView>(AppView.HOME);
@@ -42,6 +43,7 @@ export default function App() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6 mb-12">
+        {/* Current Affairs Card */}
         <button
           onClick={() => setCurrentView(AppView.AFFAIRS)}
           className="group relative flex flex-col items-start p-8 bg-white dark:bg-slate-900 rounded-2xl shadow-sm hover:shadow-xl dark:hover:shadow-indigo-900/10 border border-slate-200 dark:border-slate-800 transition-all duration-300 text-left"
@@ -58,6 +60,7 @@ export default function App() {
           </span>
         </button>
 
+        {/* Notes Card */}
         <button
           onClick={() => setCurrentView(AppView.NOTES)}
           className="group relative flex flex-col items-start p-8 bg-white dark:bg-slate-900 rounded-2xl shadow-sm hover:shadow-xl dark:hover:shadow-indigo-900/10 border border-slate-200 dark:border-slate-800 transition-all duration-300 text-left"
@@ -74,6 +77,7 @@ export default function App() {
           </span>
         </button>
 
+        {/* Quiz Card */}
         <button
           onClick={() => setCurrentView(AppView.TEST)}
           className="group relative flex flex-col items-start p-8 bg-white dark:bg-slate-900 rounded-2xl shadow-sm hover:shadow-xl dark:hover:shadow-emerald-900/10 border border-slate-200 dark:border-slate-800 transition-all duration-300 text-left"
@@ -95,6 +99,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-indigo-100 dark:selection:bg-indigo-900 selection:text-indigo-900 dark:selection:text-indigo-100 transition-colors duration-300">
+      {/* Header */}
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div 
@@ -119,6 +124,7 @@ export default function App() {
         </div>
       </header>
 
+      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {currentView === AppView.HOME && renderHome()}
         {currentView === AppView.AFFAIRS && <DailyCurrentAffairs onBack={() => setCurrentView(AppView.HOME)} />}
@@ -126,6 +132,7 @@ export default function App() {
         {currentView === AppView.TEST && <MockTestGenerator onBack={() => setCurrentView(AppView.HOME)} />}
       </main>
 
+      {/* Footer */}
       <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-8 mt-auto">
         <div className="max-w-7xl mx-auto px-4 text-center text-slate-400 dark:text-slate-500 text-sm">
           <p>&copy; {new Date().getFullYear()} EduMind. Powered by Google Gemini.</p>

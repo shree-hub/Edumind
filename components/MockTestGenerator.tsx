@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Brain, CheckCircle, XCircle, ArrowRight, ArrowLeft, RotateCcw, Award, Target, BookText, Sparkles } from 'lucide-react';
-import { generateMockTest } from '../services/geminiService.ts';
-import { Difficulty, Question, QuizConfig } from '../types.ts';
-import { Button } from './Button.tsx';
+import { generateMockTest } from '../services/geminiService';
+import { Difficulty, Question, QuizConfig } from '../types';
+import { Button } from './Button';
 
 interface MockTestGeneratorProps {
   onBack: () => void;
