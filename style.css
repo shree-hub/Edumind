@@ -1,0 +1,235 @@
+:root {
+    --bg: #f8fafc;
+    --text: #0f172a;
+    --card-bg: #ffffff;
+    --border: #e2e8f0;
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --secondary: #64748b;
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+body.dark {
+    --bg: #0f172a;
+    --text: #f8fafc;
+    --card-bg: #1e293b;
+    --border: #334155;
+    --primary: #6366f1;
+    --primary-hover: #818cf8;
+    --secondary: #94a3b8;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.header {
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    height: 70px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.logo-icon { font-size: 1.5rem; }
+.logo-text { font-weight: 800; font-size: 1.25rem; }
+
+.nav-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.nav-links button {
+    background: transparent;
+    border: none;
+    color: var(--secondary);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.nav-links button:hover { color: var(--primary); }
+
+.theme-btn {
+    background: var(--border) !important;
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Views */
+.view {
+    display: none;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.view.active { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero */
+.hero {
+    text-align: center;
+    padding: 4rem 0;
+}
+
+.hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; }
+.hero p { font-size: 1.1rem; color: var(--secondary); }
+
+/* Grid Cards */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    border-radius: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+}
+
+.card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.card h2 { margin-bottom: 0.75rem; }
+
+/* Elements */
+.py-lg { padding: 2rem 0; }
+.btn-back {
+    background: transparent;
+    border: none;
+    color: var(--secondary);
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-primary:hover { background-color: var(--primary-hover); }
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+input, select {
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+    width: 100%;
+}
+
+.content-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    border-radius: 1rem;
+    margin-top: 1.5rem;
+}
+
+.hidden { display: none; }
+.w-full { width: 100%; }
+.mt-md { margin-top: 1.5rem; }
+
+.options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.option-btn {
+    text-align: left;
+    padding: 1rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text);
+    transition: all 0.2s;
+}
+
+.option-btn:hover { border-color: var(--primary); background: var(--border); }
+
+.score-display { font-size: 4rem; font-weight: 800; color: var(--primary); }
+
+.footer {
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--secondary);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 600px) {
+    .hero h1 { font-size: 2rem; }
+    .nav-links button { display: none; }
+    .nav-links button#theme-toggle { display: flex; }
+}
