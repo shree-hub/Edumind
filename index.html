@@ -5,35 +5,478 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduMind - AI Study Companion</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                },
             },
-          },
-        },
-      }
+        }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script type="importmap">
+    <style>
+        .bg-grid {
+            background-image: radial-gradient(#6366f1 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+        }
+        .dark .bg-grid {
+            background-image: radial-gradient(#312e81 0.5px, transparent 0.5px);
+        }
+        .markdown-body table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 1.5rem 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .dark .markdown-body table { border-color: #1e293b; }
+        .markdown-body th { background: #f8fafc; padding: 12px 16px; font-weight: 800; text-align: left; }
+        .dark .markdown-body th { background: #0f172a; color: #a5b4fc; }
+        .markdown-body td { padding: 12px 16px; border-top: 1px solid #e2e8f0; }
+        .dark .markdown-body td { border-color: #1e293b; }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .float-animation { animation: float 6s ease-in-out infinite; }
+        .hidden { display: none; }
+        .view-transition { transition: opacity 0.3s ease; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100 min-h-screen relative overflow-x-hidden bg-grid">
+
+    <!-- Header -->
+    <header class="sticky top-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b-2 border-slate-100 dark:border-slate-800 z-50 p-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div id="btn-logo" class="flex items-center gap-3 font-black text-3xl cursor-pointer tracking-tighter hover:scale-105 transition-transform">
+                <div class="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-100 dark:shadow-none">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm0 0V20"/></svg>
+                </div>
+                EduMind
+            </div>
+            <button id="btn-theme" class="p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition-all">
+                <svg id="icon-sun" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
+                <svg id="icon-moon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <main id="main-content" class="max-w-7xl mx-auto p-4 md:p-10">
+        <!-- Views injected by JavaScript -->
+    </main>
+
+    <footer class="p-10 border-t-2 border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-center opacity-40 font-black uppercase text-[10px] tracking-[0.5em]">
+        EduMind Platform &copy; 2025 • Gemini AI Companion
+    </footer>
+
+    <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
+    "@google/genai": "https://esm.sh/@google/genai@1.34.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
     "vite": "https://esm.sh/vite@^7.3.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
     "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>
-</head>
-<body class="bg-slate-50 text-slate-900 antialiased transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
-    <div id="root"></div>
-    <script type="module" src="main.tsx"></script>
+
+    <script type="module">
+        import { GoogleGenAI, Type, Modality } from "@google/genai";
+
+        // Global State
+        const State = {
+            view: 'HOME',
+            theme: localStorage.getItem('theme') || 'light',
+            ai: new GoogleGenAI({ apiKey: process.env.API_KEY }),
+            quiz: { data: null, index: 0, answers: [] },
+            audio: { playing: false, source: null, context: null }
+        };
+
+        // UI Helpers
+        const utils = {
+            render: (template) => {
+                const main = document.getElementById('main-content');
+                main.style.opacity = 0;
+                setTimeout(() => {
+                    main.innerHTML = template;
+                    main.style.opacity = 1;
+                    window.scrollTo(0, 0);
+                }, 100);
+            },
+            parseMarkdown: (text) => {
+                if (!text) return '';
+                // Simple regex-based markdown parsing for the single-file version
+                let html = text
+                    .replace(/^# (.*$)/gm, '<h1 class="text-4xl font-black mb-6">$1</h1>')
+                    .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-black mt-10 mb-4 border-b pb-2">$1</h2>')
+                    .replace(/^### (.*$)/gm, '<h3 class="text-xl font-bold mt-6 mb-2">$1</h3>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/^- (.*$)/gm, '<li class="ml-6 list-disc mb-2">$1</li>')
+                    .replace(/\n\n/g, '<br/>')
+                    .replace(/\n/g, '<br/>');
+
+                // Table support
+                if (html.includes('|')) {
+                    const lines = text.split('\n');
+                    let inTable = false;
+                    let tableHtml = '';
+                    let normalHtml = '';
+                    
+                    lines.forEach(line => {
+                        if (line.trim().startsWith('|')) {
+                            if (!inTable) {
+                                inTable = true;
+                                tableHtml = '<div class="overflow-x-auto my-6 border-2 rounded-2xl"><table class="min-w-full"><tbody class="divide-y">';
+                            }
+                            const cells = line.split('|').filter(c => c.trim().length > 0);
+                            if (!line.includes('---')) {
+                                tableHtml += '<tr>' + cells.map(c => `<td class="p-4 text-sm">${c.trim()}</td>`).join('') + '</tr>';
+                            }
+                        } else {
+                            if (inTable) {
+                                inTable = false;
+                                tableHtml += '</tbody></table></div>';
+                                normalHtml += tableHtml;
+                            }
+                            normalHtml += `<p class="my-2">${line}</p>`;
+                        }
+                    });
+                    if (inTable) normalHtml += '</tbody></table></div>';
+                    return normalHtml;
+                }
+                return html;
+            }
+        };
+
+        // Templates
+        const Templates = {
+            HOME: () => `
+                <div class="max-w-6xl mx-auto py-20 px-6">
+                    <div class="text-center mb-24">
+                        <div class="bg-indigo-600 p-6 inline-block rounded-[2.5rem] mb-10 shadow-2xl shadow-indigo-200 dark:shadow-none float-animation">
+                            <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm0 0V20"/></svg>
+                        </div>
+                        <h1 class="text-7xl font-black mb-6 tracking-tighter text-slate-900 dark:text-white">EduMind</h1>
+                        <p class="text-2xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto font-bold leading-relaxed">AI-powered hub for comprehensive study notes, real-time news, and diagnostic tests.</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <button onclick="router.navigate('AFFAIRS')" class="group p-10 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-[3.5rem] hover:shadow-[0_40px_80px_-20px_rgba(79,70,229,0.2)] hover:border-indigo-400 transition-all duration-500 text-left relative overflow-hidden">
+                            <div class="p-4 bg-amber-100 dark:bg-amber-900/30 w-fit rounded-2xl mb-8 group-hover:rotate-12 group-hover:scale-110 transition-transform"><svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 2v4h4"/></svg></div>
+                            <h3 class="text-2xl font-black mb-3">Current Affairs</h3>
+                            <p class="text-slate-500 font-bold text-sm mb-10 leading-relaxed">Real-time coverage with multi-language & audio support.</p>
+                            <div class="mt-auto text-xs font-black uppercase tracking-[0.2em] text-amber-600">Explore &rarr;</div>
+                        </button>
+                        <button onclick="router.navigate('GK')" class="group p-10 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-[3.5rem] hover:shadow-[0_40px_80px_-20px_rgba(79,70,229,0.2)] hover:border-indigo-400 transition-all duration-500 text-left relative overflow-hidden">
+                            <div class="p-4 bg-purple-100 dark:bg-purple-900/30 w-fit rounded-2xl mb-8 group-hover:rotate-12 group-hover:scale-110 transition-transform"><svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                            <h3 class="text-2xl font-black mb-3">Static GK</h3>
+                            <p class="text-slate-500 font-bold text-sm mb-10 leading-relaxed">Factual knowledge library with structured fact sheets.</p>
+                            <div class="mt-auto text-xs font-black uppercase tracking-[0.2em] text-purple-600">Explore &rarr;</div>
+                        </button>
+                        <button onclick="router.navigate('NOTES')" class="group p-10 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-[3.5rem] hover:shadow-[0_40px_80px_-20px_rgba(79,70,229,0.2)] hover:border-indigo-400 transition-all duration-500 text-left relative overflow-hidden">
+                            <div class="p-4 bg-blue-100 dark:bg-blue-900/30 w-fit rounded-2xl mb-8 group-hover:rotate-12 group-hover:scale-110 transition-transform"><svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></div>
+                            <h3 class="text-2xl font-black mb-3">Study Notes</h3>
+                            <p class="text-slate-500 font-bold text-sm mb-10 leading-relaxed">In-depth structured notes for UPSC and other exams.</p>
+                            <div class="mt-auto text-xs font-black uppercase tracking-[0.2em] text-blue-600">Explore &rarr;</div>
+                        </button>
+                        <button onclick="router.navigate('TEST')" class="group p-10 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-[3.5rem] hover:shadow-[0_40px_80px_-20px_rgba(79,70,229,0.2)] hover:border-indigo-400 transition-all duration-500 text-left relative overflow-hidden">
+                            <div class="p-4 bg-emerald-100 dark:bg-emerald-900/30 w-fit rounded-2xl mb-8 group-hover:rotate-12 group-hover:scale-110 transition-transform"><svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></div>
+                            <h3 class="text-2xl font-black mb-3">Mock Tests</h3>
+                            <p class="text-slate-500 font-bold text-sm mb-10 leading-relaxed">AI-generated assessments with diagnostic feedback.</p>
+                            <div class="mt-auto text-xs font-black uppercase tracking-[0.2em] text-emerald-600">Explore &rarr;</div>
+                        </button>
+                    </div>
+                </div>
+            `,
+            AFFAIRS: () => `
+                <div class="max-w-4xl mx-auto py-10">
+                    <button onclick="router.navigate('HOME')" class="mb-10 text-indigo-600 font-black flex items-center gap-2">&larr; Dashboard</button>
+                    <div id="affairs-selection" class="text-center">
+                        <h1 class="text-4xl font-black mb-10">Select News Edition</h1>
+                        <div class="grid grid-cols-2 gap-6">
+                            ${['Kannada', 'English', 'Hindi', 'Spanish'].map(l => `<button onclick="views.affairs.fetch('${l}')" class="p-10 border-4 border-white dark:border-slate-800 bg-white dark:bg-slate-900 rounded-[3rem] hover:border-indigo-500 shadow-xl transition-all text-2xl font-black">${l}</button>`).join('')}
+                        </div>
+                    </div>
+                    <div id="affairs-loading" class="hidden py-40 text-center animate-pulse">
+                        <div class="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+                        <h2 class="text-2xl font-black">Syncing Global Sources...</h2>
+                    </div>
+                    <div id="affairs-content" class="hidden">
+                        <div class="flex justify-between items-center mb-10">
+                            <h2 class="text-2xl font-black" id="affairs-title">Today's News</h2>
+                            <div class="flex gap-4">
+                                <button id="btn-listen" class="px-6 py-3 rounded-full bg-indigo-600 text-white font-black flex items-center gap-2 shadow-lg"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15.586A2 2 0 005 17h10a2 2 0 002-2v-3a2 2 0 00-2-2H9.414l-3.828-3.828z"/></svg> Listen</button>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-900 p-12 rounded-[3.5rem] shadow-2xl border-2 border-slate-100 dark:border-slate-800 markdown-body" id="affairs-body"></div>
+                    </div>
+                </div>
+            `,
+            GK: () => `
+                <div class="max-w-4xl mx-auto py-10">
+                    <button onclick="router.navigate('HOME')" class="mb-10 text-indigo-600 font-black flex items-center gap-2">&larr; Dashboard</button>
+                    <div class="bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] shadow-xl border-2 border-slate-100 dark:border-slate-800 mb-10">
+                        <h2 class="text-3xl font-black mb-8">Static GK Vault</h2>
+                        <input id="gk-topic" placeholder="e.g., Major Rivers of India, UNESCO World Heritage Sites" class="w-full p-5 bg-slate-50 dark:bg-slate-950 border-2 rounded-2xl mb-6 outline-none focus:border-indigo-500 font-bold" />
+                        <button onclick="views.gk.generate()" id="btn-gk-gen" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-xl">Generate Material</button>
+                    </div>
+                    <div id="gk-result" class="bg-white dark:bg-slate-900 p-12 rounded-[2.5rem] shadow-2xl border-2 hidden markdown-body"></div>
+                </div>
+            `,
+            NOTES: () => `
+                <div class="max-w-4xl mx-auto py-10">
+                    <button onclick="router.navigate('HOME')" class="mb-10 text-indigo-600 font-black flex items-center gap-2">&larr; Dashboard</button>
+                    <div class="bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] shadow-xl border-2 border-slate-100 dark:border-slate-800 mb-10">
+                        <h2 class="text-3xl font-black mb-8">AI Study Notes</h2>
+                        <input id="note-topic" placeholder="Topic to learn deeply..." class="w-full p-5 bg-slate-50 dark:bg-slate-950 border-2 rounded-2xl mb-6 outline-none focus:border-indigo-500 font-bold" />
+                        <button onclick="views.notes.generate()" id="btn-note-gen" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-xl mt-6">Create Notes</button>
+                    </div>
+                    <div id="note-result" class="bg-white dark:bg-slate-900 p-12 rounded-[2.5rem] shadow-2xl border-2 hidden markdown-body"></div>
+                </div>
+            `,
+            TEST: () => `
+                <div class="max-w-4xl mx-auto py-10">
+                    <button onclick="router.navigate('HOME')" class="mb-10 text-indigo-600 font-black flex items-center gap-2">&larr; Dashboard</button>
+                    <div id="test-config" class="max-w-xl mx-auto p-10 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border-2">
+                        <h2 class="text-3xl font-black mb-8">Mock Test</h2>
+                        <input id="test-topic" placeholder="Topic for testing..." class="w-full p-4 border-2 rounded-2xl bg-slate-50 dark:bg-slate-950 mb-6 outline-none focus:border-indigo-500 font-bold" />
+                        <button onclick="views.test.start()" id="btn-test-gen" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-xl">Start Assessment</button>
+                    </div>
+                    <div id="test-active" class="hidden">
+                        <div class="mb-10 h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden"><div id="test-progress-bar" class="h-full bg-indigo-600 transition-all w-0"></div></div>
+                        <div class="bg-white dark:bg-slate-900 p-12 rounded-[3.5rem] shadow-2xl border-2" id="test-question-box"></div>
+                    </div>
+                    <div id="test-results" class="hidden space-y-8 pb-20"></div>
+                </div>
+            `
+        };
+
+        // Logic Modules
+        window.views = {
+            affairs: {
+                currentText: '',
+                fetch: async (lang) => {
+                    const sel = document.getElementById('affairs-selection');
+                    const load = document.getElementById('affairs-loading');
+                    const cont = document.getElementById('affairs-content');
+                    
+                    sel.classList.add('hidden');
+                    load.classList.remove('hidden');
+                    
+                    try {
+                        const prompt = `Act as a news curator. Provide a daily digest of the top 5 current affairs for today. Language: ${lang}. Focus on exams like UPSC. Format: Markdown with categories and headlines.`;
+                        const res = await State.ai.models.generateContent({
+                            model: 'gemini-3-flash-preview',
+                            contents: prompt,
+                            config: { tools: [{ googleSearch: {} }] }
+                        });
+                        views.affairs.currentText = res.text;
+                        document.getElementById('affairs-body').innerHTML = utils.parseMarkdown(res.text);
+                        document.getElementById('btn-listen').onclick = () => views.affairs.speak(lang);
+                        load.classList.add('hidden');
+                        cont.classList.remove('hidden');
+                    } catch (e) {
+                        alert('Sync failed.');
+                        sel.classList.remove('hidden'); load.classList.add('hidden');
+                    }
+                },
+                speak: async (lang) => {
+                    if (State.audio.playing) { views.affairs.stopAudio(); return; }
+                    const btn = document.getElementById('btn-listen');
+                    btn.innerText = 'Processing...';
+                    try {
+                        const cleanText = views.affairs.currentText.replace(/[*#\[\]|]/g, '').substring(0, 800);
+                        const res = await State.ai.models.generateContent({
+                            model: 'gemini-2.5-flash-preview-tts',
+                            contents: [{ parts: [{ text: `Read in ${lang}: ${cleanText}` }] }],
+                            config: { responseModalities: [Modality.AUDIO], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } } }
+                        });
+                        const b64 = res.candidates[0].content.parts[0].inlineData.data;
+                        await views.affairs.playAudio(b64);
+                        btn.innerText = 'Stop';
+                        btn.classList.add('bg-red-500');
+                    } catch (e) { alert('TTS failure.'); btn.innerText = 'Listen'; }
+                },
+                playAudio: async (b64) => {
+                    const bin = atob(b64);
+                    const bytes = new Uint8Array(bin.length);
+                    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+                    State.audio.context = new (window.AudioContext || window.webkitAudioContext)();
+                    const i16 = new Int16Array(bytes.buffer);
+                    const buf = State.audio.context.createBuffer(1, i16.length, 24000);
+                    const chan = buf.getChannelData(0);
+                    for (let i = 0; i < i16.length; i++) chan[i] = i16[i] / 32768.0;
+                    const src = State.audio.context.createBufferSource();
+                    src.buffer = buf; src.connect(State.audio.context.destination);
+                    src.onended = () => views.affairs.stopAudio();
+                    src.start(0); State.audio.source = src; State.audio.playing = true;
+                },
+                stopAudio: () => {
+                    if (State.audio.source) try { State.audio.source.stop(); } catch(e) {}
+                    State.audio.playing = false;
+                    const btn = document.getElementById('btn-listen');
+                    if (btn) { btn.innerText = 'Listen'; btn.classList.remove('bg-red-500'); }
+                }
+            },
+            gk: {
+                generate: async () => {
+                    const topic = document.getElementById('gk-topic').value;
+                    if (!topic) return;
+                    const btn = document.getElementById('btn-gk-gen');
+                    const res = document.getElementById('gk-result');
+                    btn.innerText = 'Syncing...'; btn.disabled = true;
+                    try {
+                        const data = await State.ai.models.generateContent({
+                            model: 'gemini-3-flash-preview',
+                            contents: `Generate Static GK fact sheet for: ${topic}. Use Markdown tables.`
+                        });
+                        res.innerHTML = utils.parseMarkdown(data.text);
+                        res.classList.remove('hidden');
+                    } catch(e) { alert('Sync error.'); }
+                    finally { btn.innerText = 'Generate Material'; btn.disabled = false; }
+                }
+            },
+            notes: {
+                generate: async () => {
+                    const topic = document.getElementById('note-topic').value;
+                    if (!topic) return;
+                    const btn = document.getElementById('btn-note-gen');
+                    const res = document.getElementById('note-result');
+                    btn.innerText = 'Synthesizing...'; btn.disabled = true;
+                    try {
+                        const data = await State.ai.models.generateContent({
+                            model: 'gemini-3-pro-preview',
+                            contents: `Generate structured educational notes for: ${topic}. Use Markdown headers.`
+                        });
+                        res.innerHTML = utils.parseMarkdown(data.text);
+                        res.classList.remove('hidden');
+                    } catch(e) { alert('Synthesis error.'); }
+                    finally { btn.innerText = 'Create Notes'; btn.disabled = false; }
+                }
+            },
+            test: {
+                start: async () => {
+                    const topic = document.getElementById('test-topic').value;
+                    if (!topic) return;
+                    const btn = document.getElementById('btn-test-gen');
+                    btn.innerText = 'Constructing...'; btn.disabled = true;
+                    try {
+                        const res = await State.ai.models.generateContent({
+                            model: 'gemini-3-pro-preview',
+                            contents: `Generate a 5-question mock test for: ${topic}. JSON array format.`,
+                            config: {
+                                responseMimeType: "application/json",
+                                responseSchema: {
+                                    type: Type.ARRAY,
+                                    items: {
+                                        type: Type.OBJECT,
+                                        properties: {
+                                            question: { type: Type.STRING },
+                                            options: { type: Type.ARRAY, items: { type: Type.STRING } },
+                                            correctAnswerIndex: { type: Type.INTEGER },
+                                            explanation: { type: Type.STRING }
+                                        },
+                                        required: ["question", "options", "correctAnswerIndex", "explanation"]
+                                    }
+                                }
+                            }
+                        });
+                        State.quiz.data = JSON.parse(res.text);
+                        State.quiz.index = 0;
+                        State.quiz.answers = new Array(State.quiz.data.length).fill(-1);
+                        document.getElementById('test-config').classList.add('hidden');
+                        document.getElementById('test-active').classList.remove('hidden');
+                        views.test.render();
+                    } catch(e) { alert('Test construction failed.'); }
+                    finally { btn.innerText = 'Start Assessment'; btn.disabled = false; }
+                },
+                render: () => {
+                    const q = State.quiz.data[State.quiz.index];
+                    const progress = ((State.quiz.index + 1) / State.quiz.data.length) * 100;
+                    document.getElementById('test-progress-bar').style.width = `${progress}%`;
+                    document.getElementById('test-question-box').innerHTML = `
+                        <h3 class="text-2xl font-black mb-10 leading-tight">${State.quiz.index + 1}. ${q.question}</h3>
+                        <div class="space-y-4">
+                            ${q.options.map((o, i) => `
+                                <button onclick="views.test.select(${i})" class="w-full text-left p-6 rounded-[1.5rem] border-2 transition-all font-bold flex items-center gap-4 ${State.quiz.answers[State.quiz.index] === i ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30' : 'border-slate-100 dark:border-slate-800'}">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-black ${State.quiz.answers[State.quiz.index] === i ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800'}">${String.fromCharCode(65+i)}</div>
+                                    ${o}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <button onclick="views.test.next()" class="mt-12 w-full py-5 text-xl bg-indigo-600 text-white rounded-[1.5rem] font-black" ${State.quiz.answers[State.quiz.index] === -1 ? 'disabled opacity-50' : ''}>
+                            ${State.quiz.index === State.quiz.data.length - 1 ? 'Complete Review' : 'Next Question'}
+                        </button>
+                    `;
+                },
+                select: (i) => { State.quiz.answers[State.quiz.index] = i; views.test.render(); },
+                next: () => {
+                    if (State.quiz.index < State.quiz.data.length - 1) { State.quiz.index++; views.test.render(); }
+                    else { views.test.results(); }
+                },
+                results: () => {
+                    const score = State.quiz.data.reduce((acc, q, i) => acc + (State.quiz.answers[i] === q.correctAnswerIndex ? 1 : 0), 0);
+                    document.getElementById('test-active').classList.add('hidden');
+                    const res = document.getElementById('test-results');
+                    res.classList.remove('hidden');
+                    let html = `<div class="text-center py-16 bg-white dark:bg-slate-900 rounded-[3.5rem] shadow-2xl border-2"><h2 class="text-5xl font-black mb-4">Score: ${score} / ${State.quiz.data.length}</h2><button onclick="router.navigate('TEST')" class="mt-8 px-12 py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-100">Try Again</button></div>`;
+                    State.quiz.data.forEach((q, i) => {
+                        const correct = State.quiz.answers[i] === q.correctAnswerIndex;
+                        html += `
+                            <div class="p-10 bg-white dark:bg-slate-900 rounded-[3rem] border-l-[12px] shadow-xl border-2 ${correct ? 'border-green-500' : 'border-red-500'}">
+                                <h4 class="text-2xl font-bold mb-6">${i+1}. ${q.question}</h4>
+                                <div class="grid grid-cols-2 gap-4 mb-8">
+                                    ${q.options.map((o, j) => `<div class="p-4 rounded-xl border-2 font-bold ${q.correctAnswerIndex === j ? 'bg-green-50 border-green-200' : State.quiz.answers[i] === j ? 'bg-red-50 border-red-200' : 'text-slate-400'}">${o}</div>`).join('')}
+                                </div>
+                                <div class="bg-indigo-50 dark:bg-indigo-900/30 p-6 rounded-2xl border-2"><p class="font-medium">${q.explanation}</p></div>
+                            </div>
+                        `;
+                    });
+                    res.innerHTML = html;
+                }
+            }
+        };
+
+        // Routing
+        window.router = {
+            navigate: (view) => {
+                views.affairs.stopAudio();
+                State.view = view;
+                utils.render(Templates[view]());
+            }
+        };
+
+        // Initialization
+        const init = () => {
+            const btnTheme = document.getElementById('btn-theme');
+            const sun = document.getElementById('icon-sun');
+            const moon = document.getElementById('icon-moon');
+            const updateTheme = () => {
+                document.documentElement.classList.toggle('dark', State.theme === 'dark');
+                if (State.theme === 'dark') { sun.classList.remove('hidden'); moon.classList.add('hidden'); }
+                else { sun.classList.add('hidden'); moon.classList.remove('hidden'); }
+            };
+            btnTheme.onclick = () => {
+                State.theme = State.theme === 'dark' ? 'light' : 'dark';
+                localStorage.setItem('theme', State.theme);
+                updateTheme();
+            };
+            document.getElementById('btn-logo').onclick = () => router.navigate('HOME');
+            updateTheme();
+            router.navigate('HOME');
+        };
+
+        init();
+    </script>
 </body>
 </html>
